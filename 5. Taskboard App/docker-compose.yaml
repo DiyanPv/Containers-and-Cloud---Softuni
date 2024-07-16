@@ -1,0 +1,29 @@
+networks:
+  taskboard_network:
+    driver: bridge
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    networks:
+      - taskboard_network
+    volumes:
+      - ./:/sqldata:/var/opt/mssql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=yourStrongPassword12#
+
+  web_app:
+    build:
+      context: .
+      dockerfile: TaskBoard.WebApp/Dockerfile
+    container_name: web_app
+    restart: always
+    ports:
+      - "5000:80"
+    networks:
+      - taskboard_network
+
