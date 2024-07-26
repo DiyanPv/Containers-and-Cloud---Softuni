@@ -1,0 +1,38 @@
+version: '3.8'
+
+networks:
+  express-mongo-network:
+    driver: bridge
+
+  react-express-network:
+    driver: bridge
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - express-mongo-network
+    volumes:
+      - ./data:/data/db
+
+  backend:
+    build: ../backend
+    container_name: backend
+    restart: always
+    ports:
+      - "3000:3000"
+    networks:
+      - express-mongo-network
+      - react-express-network
+
+  frontend:
+    build: ../frontend
+    container_name: frontend
+    restart: always
+    ports:
+      - "3001:3000"
+    networks:
+      - react-express-network
